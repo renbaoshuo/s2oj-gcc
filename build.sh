@@ -5,21 +5,32 @@ GCC_VERSION="13.2.0"
 # GCC_GIT="git://gcc.gnu.org/git/gcc.git"
 GCC_GIT="https://git.m.ac/mirrors/gcc.git"
 GCC_SRC="${CURRENT_DIR}/../gcc"
-BUILD_DIR="build"
+
+build_cd() {
+  cd $@
+  echo "****** Now at: $(pwd)"
+}
 
 # Clone GCC
 echo "===> Cloning GCC..."
 git clone -b "releases/gcc-$GCC_VERSION" --depth 1 "${GCC_GIT}" "${GCC_SRC}"
 
+# Download prerequisites
+echo "===> Downloading prerequisites..."
+build_cd ${GCC_SRC}
+./contrib/download_prerequisites
+build_cd ${CURRENT_DIR}
+
 # Apply patches
 echo "===> Applying patches..."
-cd ${GCC_SRC}
+build_cd ${GCC_SRC}
 patch -p1 < ${CURRENT_DIR}/patches/gcc-$GCC_VERSION.patch
-cd ${CURRENT_DIR}
+build_cd ${CURRENT_DIR}
 
 # Configure GCC
 echo "===> Configuring GCC..."
-cd ${CURRENT_DIR}/${BUILD_DIR}
+build_cd ${CURRENT_DIR}/build
+echo "     Now at: $(pwd)"
 ${GCC_SRC}/configure -v \
   --enable-languages=c,c++ \
   --prefix=/usr \
@@ -35,7 +46,7 @@ make -j$(nproc)
 # Make .deb package
 echo "===> Making .deb package \"s2oj-gcc-$GCC_VERSION~1baoshuo1.deb\" ..."
 make -j$(nproc) DESTDIR=${CURRENT_DIR}/deb install
-cd ${CURRENT_DIR}/deb
+build_cd ${CURRENT_DIR}/deb
 mkdir -p DEBIAN
 cat << EOF > DEBIAN/control
 Package: s2oj-gcc
@@ -46,7 +57,7 @@ Architecture: amd64
 Maintainer: Baoshuo <i@baoshuo.ren>
 Description: GCC $GCC_VERSION for S2OJ
 EOF
-cd ${CURRENT_DIR}
+build_cd ${CURRENT_DIR}
 dpkg-deb --build deb s2oj-gcc-$GCC_VERSION~1baoshuo1.deb
 
 # Upload package to Gitea
