@@ -4,7 +4,7 @@ CURRENT_DIR=$(pwd)
 GCC_VERSION="13.2.0"
 # GCC_GIT="git://gcc.gnu.org/git/gcc.git"
 GCC_GIT="https://git.m.ac/mirrors/gcc.git"
-GCC_SRC="${CURRENT_DIR}/../src"
+GCC_SRC="${CURRENT_DIR}/../gcc"
 BUILD_DIR="build"
 
 # Clone GCC
