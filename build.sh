@@ -1,15 +1,19 @@
 #!/bin/bash
 
 CURRENT_DIR=$(pwd)
-GCC_VERSION="13.2.0"
-# GCC_GIT="git://gcc.gnu.org/git/gcc.git"
-GCC_GIT="https://git.m.ac/mirrors/gcc.git"
+GCC_VERSION=$(cat GCC_VERSION)
+GCC_GIT="git://gcc.gnu.org/git/gcc.git"
 GCC_SRC="${CURRENT_DIR}/../gcc"
 
 build_cd() {
   cd $@
   echo "****** Now at: $(pwd)"
 }
+
+if [ -z "$GCC_VERSION" ]; then
+  echo "GCC_VERSION not set!"
+  exit 1
+fi
 
 # Clone GCC
 echo "===> Cloning GCC..."
@@ -59,9 +63,3 @@ Description: GCC $GCC_VERSION for S2OJ
 EOF
 build_cd ${CURRENT_DIR}
 dpkg-deb --build deb s2oj-gcc-$GCC_VERSION~1baoshuo1.deb
-
-# Upload package to Gitea
-echo "===> Uploading package to Gitea..."
-curl --user "${GITEA_USER}:${GITEA_TOKEN}" \
-     --upload-file s2oj-gcc-$GCC_VERSION~1baoshuo1.deb \
-     ${GITEA_ENDPOINT}/api/packages/${GITEA_USER}/debian/pool/all/main/upload
