@@ -14,7 +14,7 @@ git clone -b "releases/gcc-$GCC_VERSION" --depth 1 "${GCC_GIT}" "${GCC_SRC}"
 # Apply patches
 echo "===> Applying patches..."
 cd ${GCC_SRC}
-patch -p1 < ../patches/gcc-$GCC_VERSION.patch
+patch -p1 < ${CURRENT_DIR}/patches/gcc-$GCC_VERSION.patch
 cd ${CURRENT_DIR}
 
 # Configure GCC
