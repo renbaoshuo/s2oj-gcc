@@ -34,7 +34,6 @@ build_cd ${CURRENT_DIR}
 # Configure GCC
 echo "===> Configuring GCC..."
 build_cd ${CURRENT_DIR}/build
-echo "     Now at: $(pwd)"
 ${GCC_SRC}/configure -v \
   --enable-languages=c,c++ \
   --prefix=/usr \
@@ -47,8 +46,8 @@ ${GCC_SRC}/configure -v \
 echo "===> Building GCC..."
 make -j$(nproc)
 
-# Make .deb package
-echo "===> Making .deb package \"s2oj-gcc-$GCC_VERSION~1baoshuo1.deb\" ..."
+# Prepare for packaging
+echo "===> Preparing for packaging..."
 make -j$(nproc) DESTDIR=${CURRENT_DIR}/deb install
 build_cd ${CURRENT_DIR}/deb
 mkdir -p DEBIAN
@@ -62,4 +61,3 @@ Maintainer: Baoshuo <i@baoshuo.ren>
 Description: GCC $GCC_VERSION for S2OJ
 EOF
 build_cd ${CURRENT_DIR}
-dpkg-deb --build deb s2oj-gcc-$GCC_VERSION~1baoshuo1.deb

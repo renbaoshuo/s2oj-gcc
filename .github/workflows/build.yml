@@ -15,6 +15,13 @@ jobs:
           apt install -y curl flex bzip2 git make gcc g++ libgmp-dev libmpfr-dev libmpc-dev gcc-multilib
       - name: Build
         run: bash build.sh
+      - name: Upload to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: s2oj-gcc.zip
+          path: deb/
+      - name: Pack
+        run: dpkg-deb --build deb s2oj-gcc-$(cat GCC_VERSION)~1baoshuo1.deb
       - name: Upload
         run: |
           curl --user "${GITEA_USER}:${GITEA_TOKEN}" \
@@ -24,3 +31,11 @@ jobs:
           GITEA_ENDPOINT: https://git.m.ac
           GITEA_USER: baoshuo
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+      - name: Get Package Filename
+        id: GetPackageFilename
+        run: echo ::set-output name=filename::s2oj-gcc-$(cat GCC_VERSION)~1baoshuo1.deb
+      - name: Upload to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: s2oj-gcc.deb
+          path: ${{ steps.GetPackageFilename.outputs.filename }}
