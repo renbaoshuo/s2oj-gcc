@@ -1,5 +1,6 @@
 #!/bin/bash
 
+GIT_COMMIT=$(git rev-parse --short HEAD)
 CURRENT_DIR=$(pwd)
 GCC_VERSION=$(cat GCC_VERSION)
 GCC_GIT="git://gcc.gnu.org/git/gcc.git"
@@ -36,11 +37,11 @@ echo "===> Configuring GCC..."
 build_cd ${CURRENT_DIR}/build
 ${GCC_SRC}/configure -v \
   --enable-languages=c,c++ \
-  --prefix=/usr \
+  --program-prefix=s2oj- \
   --build=x86_64-linux-gnu \
   --host=x86_64-linux-gnu \
   --target=x86_64-linux-gnu \
-  --with-pkgversion="s2oj-gcc-$GCC_VERSION~1baoshuo1"
+  --with-pkgversion="s2oj-gcc $GCC_VERSION-1baoshuo1~${GIT_COMMIT}"
 
 # Build GCC
 echo "===> Building GCC..."
@@ -53,7 +54,7 @@ build_cd ${CURRENT_DIR}/deb
 mkdir -p DEBIAN
 cat << EOF > DEBIAN/control
 Package: s2oj-gcc
-Version: $GCC_VERSION~1baoshuo1
+Version: $GCC_VERSION-1baoshuo1
 Section: base
 Priority: optional
 Architecture: amd64
